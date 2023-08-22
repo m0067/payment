@@ -1,0 +1,18 @@
+core:
+    resource:
+        path: ../src/Core/Controller/
+        namespace: App\Core\Controller
+    type: attribute
+module1:
+    resource:
+        path: ../src/Module1/Controller/
+        namespace: App\Module1\Controller
+    type: attribute
+    name_prefix: 'module1_'
+
+module2:
+    resource:
+        path: ../src/Module2/Controller/
+        namespace: App\Module2\Controller
+    type: attribute
+    name_prefix: 'module2_'
