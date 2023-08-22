@@ -1,0 +1,52 @@
+version: "3.7"
+services:
+
+  payment_mariadb:
+    container_name: payment_mariadb
+    restart: always
+    image: mariadb:10.6
+    working_dir: /opt/sqldump
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "10111:3306"
+    networks:
+      payment:
+        aliases:
+          - payment_mariadb
+
+  payment_php:
+    user: dev:dev
+    container_name: payment_php
+    build: docker_config/php
+    restart: always
+    volumes:
+      - ./${SYMFONY_APP}:/var/www/payment
+      - ./docker_config/php/www2.conf:/usr/local/etc/php-fpm.d/www2.conf
+    working_dir: /var/www/payment
+    ports:
+      - "10112:9000"
+    networks:
+      payment:
+        aliases:
+          - payment_php
+
+
+  payment_nginx:
+    container_name: payment_nginx
+    restart: always
+    image: nginx:stable-alpine
+    volumes:
+      - ./docker_config/nginx/mime.types:/etc/nginx/mime.types
+      - ./docker_config/nginx/default.conf:/etc/nginx/conf.d/default.conf
+#      - ./${SYMFONY_APP}/public/bundles:/var/www/payment/public/bundles
+#      - ./${SYMFONY_APP}/public/dist:/var/www/payment/public/dist
+    ports:
+      - "10113:80"
+    networks:
+      payment:
+        aliases:
+          - payment_nginx
+
+networks:
+  payment:
